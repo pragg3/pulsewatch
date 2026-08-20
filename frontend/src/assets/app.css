@@ -1,0 +1,298 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #e5e7eb;
+  background: #090d16;
+  font-synthesis: none;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 0%, #15223a 0%, transparent 35%),
+    #090d16;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: #8ba9ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.app {
+  width: min(1050px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 55px 0 32px;
+  border-bottom: 1px solid #20293a;
+}
+
+.header h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 2.2rem;
+  letter-spacing: -0.04em;
+}
+
+.header p {
+  margin: 8px 0 0;
+  color: #8f9bad;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #263247;
+  border-radius: 999px;
+  background: #111827;
+  color: #b8c2d1;
+  font-size: 0.85rem;
+}
+
+.status-dot,
+.monitor-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3ddc97;
+  box-shadow: 0 0 10px rgba(61, 220, 151, 0.6);
+}
+
+.dashboard {
+  display: grid;
+  gap: 22px;
+  padding: 32px 0;
+}
+
+.card {
+  padding: 26px;
+  border: 1px solid #20293a;
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.8);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+}
+
+.card-header {
+  margin-bottom: 22px;
+}
+
+.card-header h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.15rem;
+}
+
+.card-header p {
+  margin: 6px 0 0;
+  color: #7f8a9d;
+  font-size: 0.9rem;
+}
+
+.monitor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.count {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid #2b374b;
+  border-radius: 9px;
+  background: #161e2d;
+  color: #aeb9c9;
+  font-size: 0.85rem;
+}
+
+.monitor-form {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  color: #b9c2d0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #2b374b;
+  border-radius: 8px;
+  outline: none;
+  background: #0d1421;
+  color: #f8fafc;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.field input::placeholder {
+  color: #536074;
+}
+
+.field input:focus {
+  border-color: #668cff;
+  box-shadow: 0 0 0 3px rgba(102, 140, 255, 0.12);
+}
+
+button {
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #668cff;
+  color: white;
+  cursor: pointer;
+  font-weight: 650;
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.monitor-list {
+  overflow: hidden;
+  border: 1px solid #20293a;
+  border-radius: 10px;
+}
+
+.monitor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 18px;
+  background: #0d1421;
+}
+
+.monitor + .monitor {
+  border-top: 1px solid #20293a;
+}
+
+.monitor-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.monitor-info h3 {
+  margin: 0 0 4px;
+  color: #edf2f7;
+  font-size: 0.95rem;
+}
+
+.monitor-info a {
+  font-size: 0.82rem;
+}
+
+.badge {
+  padding: 5px 9px;
+  border: 1px solid rgba(61, 220, 151, 0.25);
+  border-radius: 999px;
+  background: rgba(61, 220, 151, 0.08);
+  color: #57e6a7;
+  font-size: 0.75rem;
+}
+
+.badge.inactive {
+  border-color: #3a4352;
+  background: #202735;
+  color: #8c97a8;
+}
+
+.empty-state {
+  padding: 42px 20px;
+  text-align: center;
+  color: #7f8a9d;
+}
+
+.empty-icon {
+  margin-bottom: 12px;
+  color: #668cff;
+  font-size: 1.8rem;
+}
+
+.empty-state h3 {
+  margin: 0;
+  color: #d8dee9;
+}
+
+.empty-state p {
+  margin: 7px 0 0;
+}
+
+.error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #ff7b86;
+  font-size: 0.85rem;
+}
+
+.message {
+  color: #8f9bad;
+}
+
+footer {
+  padding: 8px 0 35px;
+  color: #536074;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 750px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .monitor-form {
+    grid-template-columns: 1fr;
+  }
+
+  .monitor {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+}

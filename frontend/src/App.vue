@@ -69,72 +69,145 @@ onMounted(loadMonitors)
 </script>
 
 <template>
-  <main>
-    <h1>PulseWatch</h1>
-    <p>Website Monitoring Dashboard</p>
-    <section>
-      <h2>Add Monitor</h2>
+  <div class="app">
+    <header class="header">
+      <div>
+        <h1>PulseWatch</h1>
+        <p>Simple uptime monitoring for your services.</p>
+      </div>
 
-      <form @submit.prevent="addMonitor">
-        <div>
-          <label for="name">Name</label>
-          <input
-            id="name"
-            v-model="name"
-            type="text"
-            placeholder="GitLab"
-            required
-          >
+      <span class="system-status">
+        <span class="status-dot" />
+        System Online
+      </span>
+    </header>
+
+    <main class="dashboard">
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Add Monitor</h2>
+            <p>Start monitoring a new website or service.</p>
+          </div>
         </div>
 
-        <div>
-          <label for="url">URL</label>
-          <input
-            id="url"
-            v-model="url"
-            type="url"
-            placeholder="https://gitlab.com"
-            required
-          >
-        </div>
-
-        <button
-          type="submit"
-          :disabled="submitting"
+        <form
+          class="monitor-form"
+          @submit.prevent="addMonitor"
         >
-          {{ submitting ? 'Adding...' : 'Add Monitor' }}
-        </button>
+          <div class="field">
+            <label for="name">Name</label>
+            <input
+              id="name"
+              v-model="name"
+              type="text"
+              placeholder="GitHub"
+              required
+            >
+          </div>
 
-        <p v-if="formError">
-          {{ formError }}
+          <div class="field">
+            <label for="url">URL</label>
+            <input
+              id="url"
+              v-model="url"
+              type="url"
+              placeholder="https://github.com"
+              required
+            >
+          </div>
+
+          <button
+            type="submit"
+            :disabled="submitting"
+          >
+            {{ submitting ? 'Adding...' : 'Add Monitor' }}
+          </button>
+
+          <p
+            v-if="formError"
+            class="error"
+          >
+            {{ formError }}
+          </p>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-header monitor-heading">
+          <div>
+            <h2>Monitors</h2>
+            <p>Your monitored services.</p>
+          </div>
+
+          <span class="count">
+            {{ monitors.length }}
+          </span>
+        </div>
+
+        <p
+          v-if="loading"
+          class="message"
+        >
+          Loading monitors...
         </p>
-      </form>
-    </section>
-    <section>
-      <h2>Monitors</h2>
 
-      <p v-if="loading">
-        Loading monitors...
-      </p>
-
-      <p v-else-if="error">
-        {{ error }}
-      </p>
-
-      <p v-else-if="monitors.length === 0">
-        No monitors yet.
-      </p>
-
-      <ul v-else>
-        <li
-          v-for="monitor in monitors"
-          :key="monitor.id"
+        <p
+          v-else-if="error"
+          class="error"
         >
-          <strong>{{ monitor.name }}</strong>
-          —
-          {{ monitor.url }}
-        </li>
-      </ul>
-    </section>
-  </main>
+          {{ error }}
+        </p>
+
+        <div
+          v-else-if="monitors.length === 0"
+          class="empty-state"
+        >
+          <div class="empty-icon">
+            ◉
+          </div>
+          <h3>No monitors yet</h3>
+          <p>Add your first monitor above.</p>
+        </div>
+
+        <div
+          v-else
+          class="monitor-list"
+        >
+          <article
+            v-for="monitor in monitors"
+            :key="monitor.id"
+            class="monitor"
+          >
+            <div class="monitor-info">
+              <span class="monitor-dot" />
+
+              <div>
+                <h3>{{ monitor.name }}</h3>
+
+                <a
+                  :href="monitor.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ monitor.url }}
+                </a>
+              </div>
+            </div>
+
+            <span
+              class="badge"
+              :class="{ inactive: !monitor.is_active }"
+            >
+              {{ monitor.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      PulseWatch · FastAPI · Vue · PostgreSQL · Docker
+    </footer>
+  </div>
 </template>
