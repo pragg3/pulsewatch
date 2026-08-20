@@ -20,5 +20,56 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://pulsewatch:pulsewatch@postgres:5432/pulsewatch
+
+    command:
+      [
+        "alembic",
+        "-c",
+        "backend/alembic.ini",
+        "upgrade",
+        "head",
+      ]
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+    container_name: pulsewatch-backend
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://pulsewatch:pulsewatch@postgres:5432/pulsewatch
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+
+    container_name: pulsewatch-frontend
+
+    ports:
+      - "3000:80"
+
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
