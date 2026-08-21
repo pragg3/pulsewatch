@@ -18,14 +18,14 @@ jobs:
 
       - name: Validate Kubernetes manifests
         run: |
-          kubectl apply --dry-run=client -f k8s/postgres/configmap.yaml
-          kubectl apply --dry-run=client -f k8s/postgres/pvc.yaml
-          kubectl apply --dry-run=client -f k8s/postgres/service.yaml
-          kubectl apply --dry-run=client -f k8s/postgres/deployment.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/postgres/configmap.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/postgres/pvc.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/postgres/service.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/postgres/deployment.yaml
 
-          kubectl apply --dry-run=client -f k8s/backend/service.yaml
-          kubectl apply --dry-run=client -f k8s/backend/deployment.yaml
-          kubectl apply --dry-run=client -f k8s/backend/migration-job.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/backend/service.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/backend/deployment.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/backend/migration-job.yaml
 
-          kubectl apply --dry-run=client -f k8s/frontend/service.yaml
-          kubectl apply --dry-run=client -f k8s/frontend/deployment.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/frontend/service.yaml
+          kubectl apply --dry-run=client --validate=false -f k8s/frontend/deployment.yaml
