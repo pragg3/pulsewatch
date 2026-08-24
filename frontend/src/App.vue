@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = '/api'
 const monitors = ref([])
 const loading = ref(true)
 const error = ref('')
