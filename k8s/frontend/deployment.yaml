@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: pragg3/pulsewatch-frontend:latest
+          image: pragg3/pulsewatch-frontend
           imagePullPolicy: Always
 
           ports:
