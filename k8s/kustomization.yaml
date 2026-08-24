@@ -16,8 +16,8 @@ resources:
 
 images:
   - name: pragg3/pulsewatch-backend
-    newTag: 4002567b7f174aea11efede08e022d6b64bfa9bc
+    newTag: b335c168a371f8c23af478fb973f3b755e7f3b38
 
   - name: pragg3/pulsewatch-frontend
-    newTag: 4002567b7f174aea11efede08e022d6b64bfa9bc
+    newTag: b335c168a371f8c23af478fb973f3b755e7f3b38
     
