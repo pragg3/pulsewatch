@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - postgres/configmap.yaml
+  - postgres/pvc.yaml
+  - postgres/service.yaml
+  - postgres/deployment.yaml
+
+  - backend/service.yaml
+  - backend/deployment.yaml
+  - backend/migration-job.yaml
+
+  - frontend/service.yaml
+  - frontend/deployment.yaml
+
+images:
+  - name: pragg3/pulsewatch-backend
+    newTag: latest
+
+  - name: pragg3/pulsewatch-frontend
+    newTag: latest
