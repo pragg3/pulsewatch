@@ -25,12 +25,22 @@ spec:
           ports:
             - containerPort: 8080
 
+          envFrom:
+            - configMapRef:
+                name: pulsewatch-backend-config
+
           env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: DATABASE_URL
+
+            - name: NETWORK_DISCOVERY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: pulsewatch-security-secret
+                  key: NETWORK_DISCOVERY_KEY
 
           readinessProbe:
             httpGet:
