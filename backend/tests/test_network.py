@@ -1,9 +1,14 @@
 from unittest.mock import AsyncMock, patch
 
+import dns.resolver
 from fastapi.testclient import TestClient
 
 from backend.app.main import app
 from backend.app.schemas.network import DiscoveredHost
+from backend.app.services.network_discovery import (
+    configured_reverse_dns_lookup,
+    reverse_dns_lookup,
+)
 
 
 @patch(
@@ -226,3 +231,67 @@ def test_discover_accepts_172_private_range(
     assert response.status_code == 200
 
     mock_discover_hosts.assert_awaited_once()
+
+def test_reverse_dns_uses_system_resolver_when_dns_not_configured():
+    with (
+        patch(
+            "backend.app.services.network_discovery.NETWORK_DNS_SERVER",
+            "",
+        ),
+        patch(
+            "backend.app.services.network_discovery.system_reverse_dns_lookup",
+            return_value="server.internal",
+        ) as system_lookup,
+    ):
+        result = reverse_dns_lookup("10.0.0.10")
+
+    assert result == "server.internal"
+    system_lookup.assert_called_once_with("10.0.0.10")
+
+
+def test_reverse_dns_uses_configured_dns_server():
+    with (
+        patch(
+            "backend.app.services.network_discovery.NETWORK_DNS_SERVER",
+            "192.168.1.53",
+        ),
+        patch(
+            "backend.app.services.network_discovery.configured_reverse_dns_lookup",
+            return_value="server.internal",
+        ) as configured_lookup,
+    ):
+        result = reverse_dns_lookup("192.168.1.20")
+
+    assert result == "server.internal"
+    configured_lookup.assert_called_once_with(
+        "192.168.1.20",
+        "192.168.1.53",
+    )
+
+
+def test_configured_reverse_dns_returns_none_for_nxdomain():
+    with patch(
+        "backend.app.services.network_discovery.dns.resolver.Resolver.resolve",
+        side_effect=dns.resolver.NXDOMAIN,
+    ):
+        result = configured_reverse_dns_lookup(
+            "192.168.1.20",
+            "192.168.1.53",
+        )
+
+    assert result is None
+
+
+def test_configured_reverse_dns_returns_ptr_hostname():
+    mock_answer = "server.example.internal."
+
+    with patch(
+        "backend.app.services.network_discovery.dns.resolver.Resolver.resolve",
+        return_value=[mock_answer],
+    ):
+        result = configured_reverse_dns_lookup(
+            "192.168.1.20",
+            "192.168.1.53",
+        )
+
+    assert result == "server.example.internal"

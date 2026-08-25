@@ -10,6 +10,7 @@ data:
   NETWORK_SCAN_CONCURRENCY: "32"
   NETWORK_PROBE_TIMEOUT_SECONDS: "0.8"
   NETWORK_SCAN_RATE_LIMIT: "5/minute"
+  NETWORK_DNS_TIMEOUT_SECONDS: "1.5"
 
   # Enable only because requests reach FastAPI through
   # PulseWatch's trusted reverse proxy.

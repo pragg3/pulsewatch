@@ -1,49 +1,165 @@
 import os
+from ipaddress import IPv4Address
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+psycopg://pulsewatch:pulsewatch@localhost:5432/pulsewatch",
 )
 
+
+def get_bool_env(
+    name: str,
+    default: bool = False,
+) -> bool:
+    """
+    Read a boolean environment variable.
+
+    Accepted true values:
+    1, true, yes, on
+
+    Accepted false values:
+    0, false, no, off
+    """
+
+    value = os.getenv(name)
+
+    if value is None:
+        return default
+
+    normalized = value.strip().lower()
+
+    if normalized in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }:
+        return True
+
+    if normalized in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }:
+        return False
+
+    raise RuntimeError(
+        f"{name} must be a boolean value."
+    )
+
+
 # ---------------------------------------------------------------------------
 # Network discovery
 # ---------------------------------------------------------------------------
 
-NETWORK_DISCOVERY_ENABLED = (
-    os.getenv("NETWORK_DISCOVERY_ENABLED", "false").lower() == "true"
+NETWORK_DISCOVERY_ENABLED = get_bool_env(
+    "NETWORK_DISCOVERY_ENABLED",
+    False,
 )
 
-# Additional protection for the network-discovery endpoints.
-#
-# Do NOT put the real value in source control.
 NETWORK_DISCOVERY_KEY = os.getenv(
     "NETWORK_DISCOVERY_KEY",
     "",
-)
+).strip()
 
-# Maximum number of addresses accepted in one request.
 NETWORK_MAX_SCAN_HOSTS = int(
-    os.getenv("NETWORK_MAX_SCAN_HOSTS", "512")
+    os.getenv(
+        "NETWORK_MAX_SCAN_HOSTS",
+        "512",
+    )
 )
 
-# Maximum number of hosts inspected concurrently.
 NETWORK_SCAN_CONCURRENCY = int(
-    os.getenv("NETWORK_SCAN_CONCURRENCY", "32")
+    os.getenv(
+        "NETWORK_SCAN_CONCURRENCY",
+        "32",
+    )
 )
 
-# Timeout for individual TCP reachability attempts.
 NETWORK_PROBE_TIMEOUT_SECONDS = float(
-    os.getenv("NETWORK_PROBE_TIMEOUT_SECONDS", "0.8")
+    os.getenv(
+        "NETWORK_PROBE_TIMEOUT_SECONDS",
+        "0.8",
+    )
 )
 
-# Maximum number of discovery requests per client.
 NETWORK_SCAN_RATE_LIMIT = os.getenv(
     "NETWORK_SCAN_RATE_LIMIT",
     "5/minute",
+).strip()
+
+NETWORK_TRUST_PROXY_HEADERS = get_bool_env(
+    "NETWORK_TRUST_PROXY_HEADERS",
+    False,
 )
 
-# Only trust X-Forwarded-For when PulseWatch is deployed behind
-# its own trusted reverse proxy.
-NETWORK_TRUST_PROXY_HEADERS = (
-    os.getenv("NETWORK_TRUST_PROXY_HEADERS", "false").lower() == "true"
+
+# ---------------------------------------------------------------------------
+# Network discovery DNS
+# ---------------------------------------------------------------------------
+#
+# NETWORK_DNS_SERVER is optional.
+#
+# When empty, hostname discovery uses the operating system / Kubernetes
+# resolver.
+#
+# An installation that has private internal DNS may provide the address of
+# its internal resolver through the environment. No customer-specific DNS
+# address is hardcoded in PulseWatch.
+#
+# Example installation configuration:
+#
+# NETWORK_DNS_SERVER=<internal DNS IPv4 address>
+#
+# Do not put organization-specific values in source control.
+
+NETWORK_DNS_SERVER = os.getenv(
+    "NETWORK_DNS_SERVER",
+    "",
+).strip()
+
+NETWORK_DNS_TIMEOUT_SECONDS = float(
+    os.getenv(
+        "NETWORK_DNS_TIMEOUT_SECONDS",
+        "1.5",
+    )
 )
+
+
+# ---------------------------------------------------------------------------
+# Configuration validation
+# ---------------------------------------------------------------------------
+
+if NETWORK_MAX_SCAN_HOSTS <= 0:
+    raise RuntimeError(
+        "NETWORK_MAX_SCAN_HOSTS must be greater than 0."
+    )
+
+if NETWORK_SCAN_CONCURRENCY <= 0:
+    raise RuntimeError(
+        "NETWORK_SCAN_CONCURRENCY must be greater than 0."
+    )
+
+if NETWORK_PROBE_TIMEOUT_SECONDS <= 0:
+    raise RuntimeError(
+        "NETWORK_PROBE_TIMEOUT_SECONDS must be greater than 0."
+    )
+
+if not NETWORK_SCAN_RATE_LIMIT:
+    raise RuntimeError(
+        "NETWORK_SCAN_RATE_LIMIT must not be empty."
+    )
+
+if NETWORK_DNS_TIMEOUT_SECONDS <= 0:
+    raise RuntimeError(
+        "NETWORK_DNS_TIMEOUT_SECONDS must be greater than 0."
+    )
+
+if NETWORK_DNS_SERVER:
+    try:
+        IPv4Address(NETWORK_DNS_SERVER)
+    except ValueError as exc:
+        raise RuntimeError(
+            "NETWORK_DNS_SERVER must be a valid IPv4 address."
+        ) from exc

@@ -2,7 +2,13 @@ import asyncio
 import socket
 from ipaddress import IPv4Address
 
+import dns.exception
+import dns.resolver
+import dns.reversename
+
 from backend.app.core.config import (
+    NETWORK_DNS_SERVER,
+    NETWORK_DNS_TIMEOUT_SECONDS,
     NETWORK_PROBE_TIMEOUT_SECONDS,
     NETWORK_SCAN_CONCURRENCY,
 )
@@ -83,12 +89,13 @@ async def is_reachable(ip: str) -> bool:
                 task.cancel()
 
 
-def reverse_dns_lookup(ip: str) -> str | None:
+def system_reverse_dns_lookup(ip: str) -> str | None:
     """
-    Resolve an IP address to a hostname using reverse DNS.
+    Resolve an address using the operating system's configured
+    resolver.
 
-    This performs the equivalent purpose of an nslookup-style
-    reverse lookup without executing shell commands.
+    This remains the default when no installation-specific DNS
+    server has been configured.
     """
 
     try:
@@ -104,10 +111,74 @@ def reverse_dns_lookup(ip: str) -> str | None:
         return None
 
 
+def configured_reverse_dns_lookup(
+    ip: str,
+    dns_server: str,
+) -> str | None:
+    """
+    Perform a PTR lookup against an explicitly configured internal
+    DNS resolver.
+
+    The resolver address is installation configuration and is never
+    supplied by the network-discovery request.
+    """
+
+    resolver = dns.resolver.Resolver(
+        configure=False,
+    )
+
+    resolver.nameservers = [
+        dns_server,
+    ]
+
+    resolver.timeout = NETWORK_DNS_TIMEOUT_SECONDS
+    resolver.lifetime = NETWORK_DNS_TIMEOUT_SECONDS
+
+    try:
+        reverse_name = dns.reversename.from_address(ip)
+
+        answers = resolver.resolve(
+            reverse_name,
+            "PTR",
+        )
+
+        for answer in answers:
+            hostname = str(answer).rstrip(".")
+
+            if hostname:
+                return hostname
+
+        return None
+
+    except (
+        dns.exception.DNSException,
+        ValueError,
+    ):
+        return None
+
+
+def reverse_dns_lookup(ip: str) -> str | None:
+    """
+    Resolve an IP address to a hostname.
+
+    If an internal DNS server has been configured for this
+    installation, use it. Otherwise fall back to the operating
+    system resolver.
+    """
+
+    if NETWORK_DNS_SERVER:
+        return configured_reverse_dns_lookup(
+            ip,
+            NETWORK_DNS_SERVER,
+        )
+
+    return system_reverse_dns_lookup(ip)
+
+
 async def resolve_hostname(ip: str) -> str | None:
     """
-    Reverse DNS is blocking, so execute it in a worker thread rather
-    than blocking FastAPI's asyncio event loop.
+    DNS resolution is blocking, so execute it in a worker thread
+    rather than blocking FastAPI's asyncio event loop.
     """
 
     return await asyncio.to_thread(
