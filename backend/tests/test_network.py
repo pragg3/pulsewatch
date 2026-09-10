@@ -64,7 +64,7 @@ def test_network_info(client):
 
     data = response.json()
 
-    assert "client_ip" in data
+    assert "host_ip" in data
     assert "scanner_ip" in data
 
     # We deliberately do NOT assert a particular real IP.
