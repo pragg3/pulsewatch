@@ -28,6 +28,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: pulsewatch-backend-config
+            - configMapRef:
+                name: pulsewatch-installation-config
+                optional: true
 
           env:
             - name: DATABASE_URL
