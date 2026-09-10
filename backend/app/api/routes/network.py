@@ -9,7 +9,7 @@ from backend.app.api.dependencies.network_security import (
 )
 from backend.app.core.config import (
     NETWORK_SCAN_RATE_LIMIT,
-    NETWORK_TRUST_PROXY_HEADERS,
+    PULSEWATCH_HOST_IP,
 )
 from backend.app.core.rate_limit import limiter
 from backend.app.schemas.network import (
@@ -47,34 +47,6 @@ def get_scanner_ip() -> str | None:
         sock.close()
 
 
-def get_client_ip(
-    request: Request,
-) -> str | None:
-    """
-    Return the HTTP client's detected address.
-
-    Proxy forwarding headers are only trusted when explicitly
-    enabled by deployment configuration.
-    """
-
-    if NETWORK_TRUST_PROXY_HEADERS:
-        forwarded_for = request.headers.get("x-forwarded-for")
-
-        if forwarded_for:
-            client_ip = forwarded_for.split(
-                ",",
-                maxsplit=1,
-            )[0].strip()
-
-            if client_ip:
-                return client_ip
-
-    if request.client:
-        return request.client.host
-
-    return None
-
-
 @router.get(
     "/info",
     response_model=NetworkInfoResponse,
@@ -83,11 +55,9 @@ def get_client_ip(
         Depends(require_discovery_key),
     ],
 )
-async def network_info(
-    request: Request,
-) -> NetworkInfoResponse:
+async def network_info() -> NetworkInfoResponse:
     return NetworkInfoResponse(
-        client_ip=get_client_ip(request),
+        host_ip=PULSEWATCH_HOST_IP or None,
         scanner_ip=get_scanner_ip(),
     )
 

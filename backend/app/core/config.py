@@ -149,3 +149,14 @@ if NETWORK_DNS_SERVER:
         IPv4Address(NETWORK_DNS_SERVER)
     except ValueError as exc:
         raise RuntimeError("NETWORK_DNS_SERVER must be a valid IPv4 address.") from exc
+
+PULSEWATCH_HOST_IP = os.getenv(
+    "PULSEWATCH_HOST_IP",
+    "",
+).strip()
+
+if PULSEWATCH_HOST_IP:
+    try:
+        IPv4Address(PULSEWATCH_HOST_IP)
+    except ValueError as exc:
+        raise RuntimeError("PULSEWATCH_HOST_IP must be a valid IPv4 address.") from exc

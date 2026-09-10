@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class NetworkInfoResponse(BaseModel):
-    client_ip: str | None
+    host_ip: str | None
     scanner_ip: str | None
 
 

@@ -2,7 +2,7 @@
 import '../../assets/styles/network-info.css'
 
 defineProps({
-  clientIp: {
+  hostIp: {
     type: String,
     default: null,
   },
@@ -17,11 +17,11 @@ defineProps({
   <div class="network-info">
     <div class="network-info-item">
       <span class="network-info-label">
-        Detected client IP
+        Server Host IP
       </span>
 
       <strong>
-        {{ clientIp || 'Unavailable' }}
+        {{ hostIp || 'Unavailable' }}
       </strong>
     </div>
 

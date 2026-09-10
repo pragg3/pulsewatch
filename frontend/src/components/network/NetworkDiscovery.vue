@@ -156,7 +156,7 @@ function lockDiscovery() {
 
     <template v-else>
       <NetworkInfo
-        :client-ip="networkInfo?.client_ip"
+        :host-ip="networkInfo?.host_ip"
         :scanner-ip="networkInfo?.scanner_ip"
       />
 
