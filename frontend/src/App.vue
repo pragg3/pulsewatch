@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
+import NetworkDiscovery from './components/network/NetworkDiscovery.vue'
+
+
 const API_URL = '/api'
 const monitors = ref([])
 const loading = ref(true)
@@ -204,6 +207,7 @@ onMounted(loadMonitors)
           </article>
         </div>
       </section>
+      <NetworkDiscovery />
     </main>
 
     <footer>

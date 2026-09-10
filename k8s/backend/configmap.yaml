@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: pulsewatch-backend-config
+
+data:
+  NETWORK_DISCOVERY_ENABLED: "true"
+  NETWORK_MAX_SCAN_HOSTS: "512"
+  NETWORK_SCAN_CONCURRENCY: "32"
+  NETWORK_PROBE_TIMEOUT_SECONDS: "0.8"
+  NETWORK_SCAN_RATE_LIMIT: "5/minute"
+  NETWORK_DNS_TIMEOUT_SECONDS: "1.5"
+
+  # Enable only because requests reach FastAPI through
+  # PulseWatch's trusted reverse proxy.
+  NETWORK_TRUST_PROXY_HEADERS: "true"

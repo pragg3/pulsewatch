@@ -9,6 +9,7 @@ resources:
 
   - backend/service.yaml
   - backend/deployment.yaml
+  - backend/configmap.yaml
   - backend/migration-job.yaml
 
   - frontend/service.yaml

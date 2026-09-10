@@ -1,3 +1,20 @@
+import os
+
+# Test-only configuration.
+# These values must be set before backend.app.main is imported.
+os.environ["NETWORK_DISCOVERY_ENABLED"] = "true"
+os.environ["NETWORK_DISCOVERY_KEY"] = "test-discovery-key"
+os.environ["NETWORK_MAX_SCAN_HOSTS"] = "512"
+os.environ["NETWORK_SCAN_CONCURRENCY"] = "32"
+os.environ["NETWORK_PROBE_TIMEOUT_SECONDS"] = "0.8"
+
+# Keep normal tests away from the production 5/minute limit.
+# Rate limiting is verified separately.
+os.environ["NETWORK_SCAN_RATE_LIMIT"] = "1000/minute"
+
+os.environ["NETWORK_TRUST_PROXY_HEADERS"] = "false"
+
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -11,7 +28,9 @@ TEST_DATABASE_URL = "sqlite://"
 
 engine = create_engine(
     TEST_DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    connect_args={
+        "check_same_thread": False,
+    },
     poolclass=StaticPool,
 )
 
@@ -36,7 +55,12 @@ def client():
 
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as test_client:
+    with TestClient(
+        app,
+        headers={
+            "X-PulseWatch-Discovery-Key": "test-discovery-key",
+        },
+    ) as test_client:
         yield test_client
 
     app.dependency_overrides.clear()
