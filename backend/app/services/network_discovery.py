@@ -19,10 +19,10 @@ from backend.app.schemas.network import DiscoveredHost
 # These are reachability hints. This is NOT intended to be a
 # user-configurable arbitrary port scanner.
 PROBE_PORTS = (
-    80,    # HTTP
-    443,   # HTTPS
-    22,    # SSH
-    445,   # SMB
+    80,  # HTTP
+    443,  # HTTPS
+    22,  # SSH
+    445,  # SMB
     3389,  # RDP
 )
 
@@ -69,12 +69,7 @@ async def is_reachable(ip: str) -> bool:
     TCP service port.
     """
 
-    tasks = [
-        asyncio.create_task(
-            try_tcp_connection(ip, port)
-        )
-        for port in PROBE_PORTS
-    ]
+    tasks = [asyncio.create_task(try_tcp_connection(ip, port)) for port in PROBE_PORTS]
 
     try:
         for task in asyncio.as_completed(tasks):
@@ -222,9 +217,7 @@ async def discover_hosts(
     Discover reachable hosts while limiting concurrent work.
     """
 
-    semaphore = asyncio.Semaphore(
-        NETWORK_SCAN_CONCURRENCY
-    )
+    semaphore = asyncio.Semaphore(NETWORK_SCAN_CONCURRENCY)
 
     tasks = [
         asyncio.create_task(
@@ -241,16 +234,8 @@ async def discover_hosts(
         return_exceptions=True,
     )
 
-    hosts = [
-        result
-        for result in results
-        if isinstance(result, DiscoveredHost)
-    ]
+    hosts = [result for result in results if isinstance(result, DiscoveredHost)]
 
-    hosts.sort(
-        key=lambda host: int(
-            IPv4Address(host.ip)
-        )
-    )
+    hosts.sort(key=lambda host: int(IPv4Address(host.ip)))
 
     return hosts

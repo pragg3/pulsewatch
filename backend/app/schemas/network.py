@@ -25,9 +25,7 @@ class NetworkScanRequest(BaseModel):
         try:
             address = IPv4Address(value)
         except ValueError as exc:
-            raise ValueError(
-                "Must be a valid IPv4 address"
-            ) from exc
+            raise ValueError("Must be a valid IPv4 address") from exc
 
         return str(address)
 

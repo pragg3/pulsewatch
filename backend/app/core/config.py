@@ -44,9 +44,7 @@ def get_bool_env(
     }:
         return False
 
-    raise RuntimeError(
-        f"{name} must be a boolean value."
-    )
+    raise RuntimeError(f"{name} must be a boolean value.")
 
 
 # ---------------------------------------------------------------------------
@@ -132,34 +130,22 @@ NETWORK_DNS_TIMEOUT_SECONDS = float(
 # ---------------------------------------------------------------------------
 
 if NETWORK_MAX_SCAN_HOSTS <= 0:
-    raise RuntimeError(
-        "NETWORK_MAX_SCAN_HOSTS must be greater than 0."
-    )
+    raise RuntimeError("NETWORK_MAX_SCAN_HOSTS must be greater than 0.")
 
 if NETWORK_SCAN_CONCURRENCY <= 0:
-    raise RuntimeError(
-        "NETWORK_SCAN_CONCURRENCY must be greater than 0."
-    )
+    raise RuntimeError("NETWORK_SCAN_CONCURRENCY must be greater than 0.")
 
 if NETWORK_PROBE_TIMEOUT_SECONDS <= 0:
-    raise RuntimeError(
-        "NETWORK_PROBE_TIMEOUT_SECONDS must be greater than 0."
-    )
+    raise RuntimeError("NETWORK_PROBE_TIMEOUT_SECONDS must be greater than 0.")
 
 if not NETWORK_SCAN_RATE_LIMIT:
-    raise RuntimeError(
-        "NETWORK_SCAN_RATE_LIMIT must not be empty."
-    )
+    raise RuntimeError("NETWORK_SCAN_RATE_LIMIT must not be empty.")
 
 if NETWORK_DNS_TIMEOUT_SECONDS <= 0:
-    raise RuntimeError(
-        "NETWORK_DNS_TIMEOUT_SECONDS must be greater than 0."
-    )
+    raise RuntimeError("NETWORK_DNS_TIMEOUT_SECONDS must be greater than 0.")
 
 if NETWORK_DNS_SERVER:
     try:
         IPv4Address(NETWORK_DNS_SERVER)
     except ValueError as exc:
-        raise RuntimeError(
-            "NETWORK_DNS_SERVER must be a valid IPv4 address."
-        ) from exc
+        raise RuntimeError("NETWORK_DNS_SERVER must be a valid IPv4 address.") from exc

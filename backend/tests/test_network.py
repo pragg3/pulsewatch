@@ -51,9 +51,7 @@ def test_discover_private_range(
     assert len(data["hosts"]) == 2
 
     assert data["hosts"][0]["ip"] == "192.168.50.10"
-    assert data["hosts"][0]["hostname"] == (
-        "server-one.internal"
-    )
+    assert data["hosts"][0]["hostname"] == ("server-one.internal")
     assert data["hosts"][0]["reachable"] is True
 
     mock_discover_hosts.assert_awaited_once()
@@ -75,15 +73,11 @@ def test_network_info(client):
 
 def test_network_info_requires_discovery_key():
     with TestClient(app) as unauthenticated_client:
-        response = unauthenticated_client.get(
-            "/network/info"
-        )
+        response = unauthenticated_client.get("/network/info")
 
     assert response.status_code == 401
 
-    assert response.json()["detail"] == (
-        "Network discovery authentication required."
-    )
+    assert response.json()["detail"] == ("Network discovery authentication required.")
 
 
 def test_network_info_rejects_wrong_discovery_key():
@@ -93,15 +87,11 @@ def test_network_info_rejects_wrong_discovery_key():
             "X-PulseWatch-Discovery-Key": "wrong-key",
         },
     ) as wrong_client:
-        response = wrong_client.get(
-            "/network/info"
-        )
+        response = wrong_client.get("/network/info")
 
     assert response.status_code == 403
 
-    assert response.json()["detail"] == (
-        "Invalid network discovery credentials."
-    )
+    assert response.json()["detail"] == ("Invalid network discovery credentials.")
 
 
 def test_discover_rejects_reversed_range(client):
@@ -158,8 +148,7 @@ def test_discover_rejects_public_range(client):
     assert response.status_code == 403
 
     assert response.json()["detail"] == (
-        "Public or non-private addresses are not "
-        "permitted for LAN discovery."
+        "Public or non-private addresses are not permitted for LAN discovery."
     )
 
 
@@ -231,6 +220,7 @@ def test_discover_accepts_172_private_range(
     assert response.status_code == 200
 
     mock_discover_hosts.assert_awaited_once()
+
 
 def test_reverse_dns_uses_system_resolver_when_dns_not_configured():
     with (

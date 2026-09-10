@@ -43,10 +43,7 @@ def require_discovery_key(
     if not NETWORK_DISCOVERY_KEY:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=(
-                "Network discovery authentication "
-                "is not configured."
-            ),
+            detail=("Network discovery authentication is not configured."),
         )
 
     if x_pulsewatch_discovery_key is None:
@@ -73,11 +70,7 @@ def _private_network_for(
     """
 
     return next(
-        (
-            network
-            for network in PRIVATE_IPV4_NETWORKS
-            if address in network
-        ),
+        (network for network in PRIVATE_IPV4_NETWORKS if address in network),
         None,
     )
 
@@ -92,10 +85,7 @@ def validate_scan_range(
     if end < start:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            detail=(
-                "end_ip must be greater than or equal "
-                "to start_ip."
-            ),
+            detail=("end_ip must be greater than or equal to start_ip."),
         )
 
     start_network = _private_network_for(start)
@@ -105,8 +95,7 @@ def validate_scan_range(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=(
-                "Public or non-private addresses are not "
-                "permitted for LAN discovery."
+                "Public or non-private addresses are not permitted for LAN discovery."
             ),
         )
 
@@ -151,8 +140,7 @@ def validate_scan_range(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=(
-                    "Special-purpose addresses are not "
-                    "permitted for LAN discovery."
+                    "Special-purpose addresses are not permitted for LAN discovery."
                 ),
             )
 

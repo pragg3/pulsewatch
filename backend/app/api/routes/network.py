@@ -58,9 +58,7 @@ def get_client_ip(
     """
 
     if NETWORK_TRUST_PROXY_HEADERS:
-        forwarded_for = request.headers.get(
-            "x-forwarded-for"
-        )
+        forwarded_for = request.headers.get("x-forwarded-for")
 
         if forwarded_for:
             client_ip = forwarded_for.split(
